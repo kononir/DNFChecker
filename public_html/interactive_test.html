@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .div1 {display:inline-block;}
+        </style>
+    </head>
+    <body>
+        Формула: <input id="formula">
+        <input type="file" id="files"/>
+        
+        <p>
+            Выберите ответ:
+            <input name="radio_button" type="radio" value="0"> Да
+            <input name="radio_button" type="radio" value="0"> Нет
+            <button id="check" onclick="test()">Проверить</button>
+        </p>
+        
+        <p>
+            <button id="next" onclick="nextTest()">Следующий тест</button>
+            <button id="prev" onclick="prevTest()">Предыдущий тест</button>
+        </p>
+        
+        <p>
+            <button id="test" onclick="goToStandart()">Перейти в обычный режим</button>
+        </p>
+        
+        <div id="answer"></div>
+        
+        <script src="interactive.js"></script>
+        <script src="checker.js"></script>
+    </body>
+</html>

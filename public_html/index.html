@@ -13,7 +13,10 @@ and open the template in the editor.
     <body>
         Введите формулу: <input id="formula">
         <button id="run" onclick="main()">Проверить формулу</button>
-        <p id="answer"></p>
+        <p>
+            <button id="test" onclick="goToInteractiveTest()">Перейти в интерактивный режим</button>
+        </p>
+        <div id="answer"></div>
         <script src="checker.js"></script>
     </body>
 </html>

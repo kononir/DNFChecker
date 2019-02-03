@@ -22,6 +22,8 @@ function main() {
     }
 
     document.getElementById("answer").innerHTML = "Ответ: " + answer;
+    
+    return (answer === isDNF);
 }
 
 function getConjuncts(formula) {
@@ -154,4 +156,8 @@ function isUnique(mas) {
 
 function notEmpty(mas) {
     return mas.length !== 0;
+}
+
+function goToInteractiveTest() {
+    document.location.href = "interactive_test.html";
 }
