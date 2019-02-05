@@ -8,34 +8,37 @@ function goToStandart() {
     document.location.href = "index.html";
 }
 
-var e;
-var testNum = 0;
+var testMas;
+var testNum;
 
-document.getElementById('files').addEventListener('change', handleFileSelect, false);
-function handleFileSelect(evt) {
-    e = evt;
-    loadTest();
-}
-
-function loadTest() {
-    var files = e.target.files;
+document.getElementById('files').addEventListener('change', handleLoading, false);
+function handleLoading(evt) {
+    var files = evt.target.files;
     
     var reader = new FileReader();
-    reader.onload = showTest;
+    reader.onload = getTestMas;
     reader.readAsText(files[0]);
 }
 
-function showTest(reader) {
-    let lines = reader.target.result;
+function getTestMas(evt) {
+    let lines = evt.target.result;
     
-    if (lines !== undefined) {
-        var testNumber = testNum;
-        var testMas = JSON.parse(lines);
-
-        document.getElementById("formula").value = testMas[testNumber];
-    } else {
-        alert("Test file error!");
+    try {
+        if (lines === undefined) {
+            throw "Ошибка чтения файла!";
+        }
+        
+        testMas = JSON.parse(lines);
+        testNum = 0;
+        
+        showTest();
+    } catch (e) {
+        alert(e);
     }
+}
+
+function showTest() {    
+    document.getElementById("formula").value = testMas[testNum];
 }
 
 function test() {
@@ -45,15 +48,19 @@ function test() {
     var checkedAnswer;
     var result;
     
-    for (var i = 0; i < radBtns.length; i++) {
-        if (radBtns[i].checked) {
-            checkedNum = i;
-        }
-    }
-    
     try {
+        if (testMas === undefined) {
+            throw "Пожалуйста, выберите файл теста!";
+        }
+    
+        for (var i = 0; i < radBtns.length; i++) {
+            if (radBtns[i].checked) {
+                checkedNum = i;
+            }
+        }
+    
         if (checkedNum === undefined) {
-            throw "not checked";
+            throw "Пожалуйста, выберите ответ!";
         }
         
         correctAnswer = main();
@@ -67,22 +74,44 @@ function test() {
     
         document.getElementById("answer").innerHTML = result;
     } catch (e) {
-        alert("Please, choose answer.");
+        alert(e);
     }
 }
 
 function nextTest() {
-    document.getElementById("answer").innerHTML = "";
-    
-    testNum++;
-    
-    loadTest();
+    try {
+        if (testMas === undefined) {
+            throw "Пожалуйста, выберите файл теста!";
+        }
+        
+        if (testNum + 1 > testMas.length - 1) {
+            throw "Вы достигли конца теста!";
+        }
+        
+        document.getElementById("answer").innerHTML = "";
+
+        testNum++;
+        showTest();
+    } catch (e) {
+        alert(e);
+    }
 }
 
 function prevTest() {
-    document.getElementById("answer").innerHTML = "";
-    
-    testNum--;
-    
-    loadTest();
+    try {
+        if (testMas === undefined) {
+            throw "Пожалуйста, выберите файл теста!";
+        }
+        
+        if (testNum - 1 < 0) {
+            throw "Это первая формула теста!";
+        }
+        
+        document.getElementById("answer").innerHTML = "";
+
+        testNum--;
+        showTest();
+    } catch (e) {
+        alert(e);
+    }
 }
