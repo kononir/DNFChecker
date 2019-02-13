@@ -1,8 +1,10 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*
+ * Лабораторная работа 2 по дисциплине ЛОИС
+ * Выполнена студентом группы 621701 БГУИР Новицким Владиславом Александровичем
+ * Скрипт предназначен для тестирования знаний пользователя, загрузки теста и переключения между заданиями
+ * Версия №1
+ *
+*/
 
 function goToStandart() {
     document.location.href = "index.html";
@@ -63,7 +65,7 @@ function test() {
             throw "Пожалуйста, выберите ответ!";
         }
         
-        correctAnswer = main();
+        correctAnswer = checkFormula();
         checkedAnswer = (checkedNum === 0);
         
         if (checkedAnswer === correctAnswer) {

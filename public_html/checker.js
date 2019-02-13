@@ -1,29 +1,41 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*
+ * Лабораторная работа 2 по дисциплине ЛОИС
+ * Выполнена студентом группы 621701 БГУИР Новицким Владиславом Александровичем
+ * Скрипт предназначен для определения того, является ли введённая формула ДНФ, а также для распечатки ответа 
+ * Версия №1
+ * 
+*/
 
-function main() {
+function checkFormulaWithPrinting() {
+    var answer = checkFormula();
+    var text;
+    
+    if (answer) {
+        text = "Данная формула является ДНФ!";
+    } else {
+        text = "Данная формула не является ДНФ!";
+    }
+    
+    document.getElementById("answer").innerHTML = "Ответ: " + text;
+}
+
+function checkFormula() {
     var inputFormula = document.getElementById("formula").value;
-    var isDNF = "Данная формула является ДНФ!";
-    var isntDNF = "Данная формула не является ДНФ!";
+    
     var answer;
     var disjMas;
 
     if (checkAtom(inputFormula)
             || checkUnaryComplex(inputFormula)) {
-        answer = isDNF;
+        answer = true;
     } else if (notEmpty(disjMas = getConjuncts(inputFormula))
             && isUnique(disjMas)) {
-        answer = isDNF;
+        answer = true;
     } else {
-        answer = isntDNF;
+        answer = false;
     }
 
-    document.getElementById("answer").innerHTML = "Ответ: " + answer;
-    
-    return (answer === isDNF);
+    return answer;
 }
 
 function getConjuncts(formula) {
@@ -90,22 +102,14 @@ function getConjunctElements(formula) {
 
 function findOperatorIndex(formula, operator) {
     var i = 0;
-    var unclosedBrackets;
+    var unclosedBrackets = 0;
 
     while (i < formula.length) {
         if (formula[i] === '(') {
-            unclosedBrackets = 0;
-
-            while (unclosedBrackets > 0) {
-                if (formula[i] === '(') {
-                    unclosedBrackets++;
-                } else if (formula[i] === ')') {
-                    unclosedBrackets--;
-                }
-
-                i++;
-            }
-        } else if (formula[i] === operator) {
+            unclosedBrackets++;
+        } else if (formula[i] === ')') {
+            unclosedBrackets--;
+        } else if (formula[i] === operator && unclosedBrackets === 0) {
             break;
         }
 
@@ -130,7 +134,6 @@ function cutBrackets(line) {
     var newLength = line.length - 2;
 
     return line.substr(second, newLength);
-    ;
 }
 
 function getSubforms(formula, operatorIndex) {
