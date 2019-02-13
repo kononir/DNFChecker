@@ -25,10 +25,9 @@ function checkFormula() {
     var answer;
     var disjMas;
 
-    if (checkAtom(inputFormula)
-            || checkUnaryComplex(inputFormula)) {
+    if (checkAtom(inputFormula) || checkNegation(inputFormula)) {
         answer = true;
-    } else if (notEmpty(disjMas = getConjuncts(inputFormula))
+    } else if (notEmpty(disjMas = getConjuncts(inputFormula)) 
             && isUnique(disjMas)) {
         answer = true;
     } else {
@@ -39,31 +38,30 @@ function checkFormula() {
 }
 
 function getConjuncts(formula) {
+    var mas = [];
+    
     if (formula.indexOf('(') === 0) {
         formula = cutBrackets(formula);
-    } else {
-        return [];
-    }
+        
+        var operatorIndex = findOperatorIndex(formula, '|');
+        var subforms = [];
+        var result = [];
 
-    var operatorIndex = findOperatorIndex(formula, '|');
-    var subforms = [];
-    var result = [];
-    var mas = [];
+        subforms = getSubforms(formula, operatorIndex);
 
-    subforms = getSubforms(formula, operatorIndex);
-
-    for (var i = 0; i < subforms.length; i++) {
-        if (checkAtom(subforms[i])) {
-            mas.push(subforms[i]);
-        } else if (checkUnaryComplex(subforms[i])) {
-            mas.push(cutBrackets(subforms[i]));
-        } else if (notEmpty(result = getConjunctElements(subforms[i]))) {
-            mas.push(result.sort().join());
-        } else if (notEmpty(result = getConjuncts(subforms[i]))) {
-            mas = mas.concat(result);
-        } else {
-            mas = [];
-            break;
+        for (var i = 0; i < subforms.length; i++) {
+            if (checkAtom(subforms[i])) {
+                mas.push(subforms[i]);
+            } else if (checkNegation(subforms[i])) {
+                mas.push(cutBrackets(subforms[i]));
+            } else if (notEmpty(result = getConjunctElements(subforms[i]))) {
+                mas.push(result.sort().join());
+            } else if (notEmpty(result = getConjuncts(subforms[i]))) {
+                mas = mas.concat(result);
+            } else {
+                mas = [];
+                break;
+            }
         }
     }
 
@@ -71,29 +69,28 @@ function getConjuncts(formula) {
 }
 
 function getConjunctElements(formula) {
+    var mas = [];
+    
     if (formula.indexOf('(') === 0) {
         formula = cutBrackets(formula);
-    } else {
-        return [];
-    }
+        
+        var operatorIndex = findOperatorIndex(formula, '&');
+        var subforms = [];
+        var result = [];
 
-    var operatorIndex = findOperatorIndex(formula, '&');
-    var subforms = [];
-    var result = [];
-    var mas = [];
+        subforms = getSubforms(formula, operatorIndex);
 
-    subforms = getSubforms(formula, operatorIndex);
-
-    for (var i = 0; i < subforms.length; i++) {
-        if (checkAtom(subforms[i])) {
-            mas.push(subforms[i]);
-        } else if (checkUnaryComplex(subforms[i])) {
-            mas.push(cutBrackets(subforms[i]));
-        } else if (notEmpty(result = getConjunctElements(subforms[i]))) {
-            mas = mas.concat(result);
-        } else {
-            mas = [];
-            break;
+        for (var i = 0; i < subforms.length; i++) {
+            if (checkAtom(subforms[i])) {
+                mas.push(subforms[i]);
+            } else if (checkNegation(subforms[i])) {
+                mas.push(cutBrackets(subforms[i]));
+            } else if (notEmpty(result = getConjunctElements(subforms[i]))) {
+                mas = mas.concat(result);
+            } else {
+                mas = [];
+                break;
+            }
         }
     }
 
@@ -119,7 +116,7 @@ function findOperatorIndex(formula, operator) {
     return i;
 }
 
-function checkUnaryComplex(formula) {
+function checkNegation(formula) {
     var unaryComplexPat = /^\(!([A-Z])+\)\d*$/;
     return formula.match(unaryComplexPat);
 }
@@ -129,11 +126,11 @@ function checkAtom(formula) {
     return formula.match(unaryComplexPat);
 }
 
-function cutBrackets(line) {
+function cutBrackets(formula) {
     var second = 1;
-    var newLength = line.length - 2;
+    var newLength = formula.length - 2;
 
-    return line.substr(second, newLength);
+    return formula.substr(second, newLength);
 }
 
 function getSubforms(formula, operatorIndex) {
@@ -159,8 +156,4 @@ function isUnique(mas) {
 
 function notEmpty(mas) {
     return mas.length !== 0;
-}
-
-function goToInteractiveTest() {
-    document.location.href = "interactive_test.html";
 }
