@@ -2,7 +2,7 @@
  * Лабораторная работа 2 по дисциплине ЛОИС
  * Выполнена студентом группы 621701 БГУИР Новицким Владиславом Александровичем
  * Скрипт предназначен для определения того, является ли введённая формула ДНФ, а также для распечатки ответа 
- * Версия №1
+ * Версия №2 
  * 
 */
 
@@ -23,12 +23,18 @@ function checkFormula() {
     var inputFormula = document.getElementById("formula").value;
     
     var answer;
-    var disjMas;
+    var conjMas = [];
+    var conjElMas = [];
 
-    if (checkAtom(inputFormula) || checkNegation(inputFormula)) {
+    if (checkAtom(inputFormula)) {
         answer = true;
-    } else if (notEmpty(disjMas = getConjuncts(inputFormula)) 
-            && isUnique(disjMas)) {
+    } else if (checkNegation(inputFormula)) {
+        answer = true;
+    } else if (notEmpty(conjMas = findConjuncts(inputFormula)) 
+            && isUnique(conjMas)) {
+        answer = true;
+    } else if (notEmpty(conjElMas = findConjunctElements(inputFormula)) 
+            && isUnique(conjElMas)) {
         answer = true;
     } else {
         answer = false;
@@ -37,7 +43,7 @@ function checkFormula() {
     return answer;
 }
 
-function getConjuncts(formula) {
+function findConjuncts(formula) {
     var mas = [];
     
     if (formula.indexOf('(') === 0) {
@@ -54,9 +60,9 @@ function getConjuncts(formula) {
                 mas.push(subforms[i]);
             } else if (checkNegation(subforms[i])) {
                 mas.push(cutBrackets(subforms[i]));
-            } else if (notEmpty(result = getConjunctElements(subforms[i]))) {
+            } else if (notEmpty(result = findConjunctElements(subforms[i]))) {
                 mas.push(result.sort().join());
-            } else if (notEmpty(result = getConjuncts(subforms[i]))) {
+            } else if (notEmpty(result = findConjuncts(subforms[i]))) {
                 mas = mas.concat(result);
             } else {
                 mas = [];
@@ -68,7 +74,7 @@ function getConjuncts(formula) {
     return mas;
 }
 
-function getConjunctElements(formula) {
+function findConjunctElements(formula) {
     var mas = [];
     
     if (formula.indexOf('(') === 0) {
@@ -85,7 +91,7 @@ function getConjunctElements(formula) {
                 mas.push(subforms[i]);
             } else if (checkNegation(subforms[i])) {
                 mas.push(cutBrackets(subforms[i]));
-            } else if (notEmpty(result = getConjunctElements(subforms[i]))) {
+            } else if (notEmpty(result = findConjunctElements(subforms[i]))) {
                 mas = mas.concat(result);
             } else {
                 mas = [];
@@ -157,3 +163,8 @@ function isUnique(mas) {
 function notEmpty(mas) {
     return mas.length !== 0;
 }
+
+/**
+ * проверка на совпадение элементов конъкта
+ * ошибка при (A&B) - удаление скобок, потом снова проверка на их наличие
+ */
